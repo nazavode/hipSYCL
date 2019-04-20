@@ -986,6 +986,65 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(explicit_buffer_copy_two_accessors_h2h,
     cgh.copy(src_acc, dst_acc);
   });
 }
+BOOST_AUTO_TEST_CASE(auto_placeholder_require_extension) {
+  namespace s = cl::sycl;
+
+  s::queue q;
+  s::buffer<int, 1> buff{1};
+  s::accessor<int, 1, s::access::mode::read_write, 
+    s::access::target::global_buffer, s::access::placeholder::true_t> acc{buff};
+
+  // This will call handler::require(acc) for each
+  // subsequently launched command group
+  auto automatic_requirement = s::automatic_require(q, acc);
+  BOOST_CHECK(automatic_requirement.is_required());
+
+  q.submit([&] (s::handler& cgh) {
+    cgh.single_task<class init>([=] (){
+      acc[0] = 1;
+    });
+  });
+
+  { 
+    auto host_acc = buff.get_access<s::access::mode::read>(); 
+    std::cout << "host acc = " << host_acc[0] << std::endl;
+    BOOST_CHECK(host_acc[0] == 1);
+  }
+
+
+  q.submit([&] (s::handler& cgh) {
+    cgh.single_task<class init>([=] (){
+      acc[0] = 2;
+    });
+  });
+
+  { 
+    auto host_acc = buff.get_access<s::access::mode::read>(); 
+    BOOST_CHECK(host_acc[0] == 2);
+  }
+
+  automatic_requirement.release();
+  BOOST_CHECK(!automatic_requirement.is_required());
+
+  { 
+    auto host_acc = buff.get_access<s::access::mode::read_write>(); 
+    host_acc[0] = 3;
+  }
+
+  automatic_requirement.reacquire();
+  BOOST_CHECK(automatic_requirement.is_required());
+
+  q.submit([&] (s::handler& cgh) {
+    cgh.single_task<class init>([=] (){
+      acc[0] += 1;
+    });
+  });
+
+  { 
+    auto host_acc = buff.get_access<s::access::mode::read>(); 
+    BOOST_CHECK(host_acc[0] == 4);
+  }
+}
 
 BOOST_AUTO_TEST_SUITE_END() // NOTE: Make sure not to add anything below this line
 

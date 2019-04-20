@@ -1,7 +1,7 @@
 /*
  * This file is part of hipSYCL, a SYCL implementation based on CUDA/HIP
  *
- * Copyright (c) 2018 Aksel Alpay
+ * Copyright (c) 2019 Aksel Alpay
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,35 +25,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SYCL_HPP
-#define SYCL_HPP
+ #ifndef HIPSYCL_EXTENSIONS_HPP
+ #define HIPSYCL_EXTENSIONS_HPP
 
-
-#define CL_SYCL_LANGUAGE_VERSION 121
-#define __SYCL_SINGLE_SOURCE__
-
-#include "sycl/extensions.hpp"
-#include "sycl/backend/backend.hpp"
-#include "sycl/version.hpp"
-#include "sycl/types.hpp"
-#include "sycl/exception.hpp"
-#include "sycl/device_selector.hpp"
-#include "sycl/device.hpp"
-#include "sycl/platform.hpp"
-#include "sycl/queue.hpp"
-#include "sycl/range.hpp"
-#include "sycl/id.hpp"
-#include "sycl/accessor.hpp"
-#include "sycl/buffer.hpp"
-#include "sycl/nd_item.hpp"
-#include "sycl/multi_ptr.hpp"
-#include "sycl/group.hpp"
-#include "sycl/h_item.hpp"
-#include "sycl/private_memory.hpp"
-#include "sycl/vec.hpp"
-#include "sycl/builtin.hpp"
-#include "sycl/math.hpp"
-#include "sycl/atomic.hpp"
-
+#ifndef HIPSYCL_NO_EXT_AUTO_PLACEHOLDER_REQUIRE
+ #define HIPSYCL_EXT_AUTO_PLACEHOLDER_REQUIRE
 #endif
 
+ #endif
