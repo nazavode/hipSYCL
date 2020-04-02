@@ -31,7 +31,9 @@ endif()
 
 target_link_libraries(hipSYCL_clang
   ${LLVM_LIBS}
-  ${Boost_LIBRARIES} -Wl,-znodelete)
+  ${Boost_LIBRARIES}
+  $<$<PLATFORM_ID:Linux>:-Wl,-znodelete>
+  $<$<PLATFORM_ID:Darwin>:-Wl,-undefined,dynamic_lookup>)
 
 install(TARGETS hipSYCL_clang
         LIBRARY DESTINATION lib
